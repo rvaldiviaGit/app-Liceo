@@ -1,0 +1,81 @@
+:root {
+    --color-primary: #1A2C50;  /* Azul marino oscuro */
+    --color-secondary: #4A5666; /* Gris azulado */
+    --color-background: #F4F6F9; /* Gris claro */
+    --color-accent: #E9ECEF; /* Gris suave */
+}
+
+body {
+    background-color: var(--color-background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+}
+
+.registro-container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(26, 44, 80, 0.1);
+    padding: 40px;
+    width: 100%;
+    max-width: 600px;
+    border: 1px solid var(--color-accent);
+}
+
+.registro-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.registro-header h2 {
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+.form-table {
+    width: 100%;
+}
+
+.form-table td {
+    padding: 10px 0;
+    vertical-align: middle;
+}
+
+.form-table .form-control {
+    background-color: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    padding: 12px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.form-table .form-control:focus {
+    background-color: white;
+    border-color: var(--color-primary);
+    box-shadow: none;
+}
+
+.btn-success {
+    background-color: var(--color-primary);
+    border: none;
+    padding: 12px;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+    background-color: var(--color-secondary);
+}
+
+.link-subtle {
+    color: var(--color-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.link-subtle:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
