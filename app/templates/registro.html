@@ -6,7 +6,7 @@
     <title>Registro de Usuario</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- <link href="/static/css/registro-styles.css" rel="stylesheet"> -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/registro-styles.css') }}">
 </head>
 <body>
     <div class="container">
@@ -51,7 +51,7 @@
                     </tr>
                     <tr>
                         <td colspan="4" class="text-center">
-                            <p>¿Ya tienes una cuenta? <a href="#" class="link-subtle">Iniciar Sesión</a></p>
+                            <p>¿Ya tienes una cuenta? <a href="{{ url_for('login') }}" class="link-subtle">Iniciar Sesión</a></p>
                         </td>
                     </tr>
                 </table>

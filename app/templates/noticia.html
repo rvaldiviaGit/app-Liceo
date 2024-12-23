@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{noticia.titulo}}</title>
+    <link href="/static/css/noticia-styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <article class="noticia">
+            <header class="noticia-header">
+                <h1>{{noticia.titulo}}</h1>
+                <div class="meta-info">
+                    <span class="categoria">{{noticia.categoria}}</span>
+                    <span class="fecha">{{noticia.fecha_publicacion}}</span>
+                    <span class="autor">Por {{noticia.autor}}</span>
+                </div>
+            </header>
+
+            {% if noticia.imagen_principal %}
+            <div class="imagen-principal">
+                <img src="{{noticia.imagen_principal}}" alt="Imagen de {{noticia.titulo}}">
+            </div>
+            {% endif %}
+
+            <div class="contenido">
+                {{noticia.contenido}}
+            </div>
+
+            {% if noticia.archivos_adjuntos %}
+            <div class="archivos-adjuntos">
+                <h3>Archivos Adjuntos</h3>
+                <ul>
+                    {% for archivo in noticia.archivos_adjuntos %}
+                    <li>
+                        <a href="{{archivo.url}}" download>
+                            {{archivo.nombre}}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </article>
+    </div>
+</body>
+</html>

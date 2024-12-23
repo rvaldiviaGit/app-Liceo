@@ -14,11 +14,26 @@ from app import app
 def index():
     return "Prueba de funcionamiento!" """
     
-from flask import render_template, flash, redirect, url_for, request
-from flask_login import login_required, current_user, login_user, logout_user
+from flask import render_template, flash, redirect,  url_for, request, jsonify
+from flask_login import login_required, admin_required, current_user, login_user, logout_user
 from app import app, db
 from app.models import Noticia, Usuario
 from werkzeug.security import generate_password_hash
+from werkzeug.utils import secure_filename
+import os
+
+# Configuración para subida de archivos
+ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_FILE_EXTENSIONS = {'pdf', 'doc', 'docx', 'xls', 'xlsx'}
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+
+def allowed_image(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_IMAGE_EXTENSIONS
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_FILE_EXTENSIONS
+
+
 
 @app.route('/')
 def index():
@@ -33,23 +48,68 @@ def ver_noticia(noticia_id):
 
 @app.route('/admin/crear_noticia', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def crear_noticia():
     if request.method == 'POST':
-        titulo = request.form['titulo']
-        contenido = request.form['contenido']
-        
-        nueva_noticia = Noticia(
-            titulo=titulo, 
-            contenido=contenido, 
-            autor=current_user
-        )
-        
-        db.session.add(nueva_noticia)
-        db.session.commit()
-        
-        flash('Noticia creada exitosamente', 'success')
-        return redirect(url_for('index'))
-    
+        try:
+            titulo = request.form['titulo']
+            contenido = request.form['contenido']
+            categoria = request.form['categoria']
+
+            # Procesar imagen principal
+            imagen_url = None
+            if 'imagen' in request.files:
+                imagen = request.files['imagen']
+                if imagen and allowed_image(imagen.filename):
+                    filename = secure_filename(imagen.filename)
+                    # Asegurarse de que el directorio existe
+                    os.makedirs(os.path.join(app.static_folder, 'uploads', 'images'), exist_ok=True)
+                    filepath = os.path.join(app.static_folder, 'uploads', 'images', filename)
+                    imagen.save(filepath)
+                    imagen_url = url_for('static', filename=f'uploads/images/{filename}')
+
+            # Procesar archivos adjuntos
+            archivos_urls = []
+            if 'archivos' in request.files:
+                archivos = request.files.getlist('archivos')
+                for archivo in archivos:
+                    if archivo and allowed_file(archivo.filename):
+                        filename = secure_filename(archivo.filename)
+                        # Asegurarse de que el directorio existe
+                        os.makedirs(os.path.join(app.static_folder, 'uploads', 'files'), exist_ok=True)
+                        filepath = os.path.join(app.static_folder, 'uploads', 'files', filename)
+                        archivo.save(filepath)
+                        archivos_urls.append(url_for('static', filename=f'uploads/files/{filename}'))
+
+            nueva_noticia = Noticia(
+                titulo=titulo,
+                contenido=contenido,
+                categoria=categoria,
+                imagen_url=imagen_url,
+                archivos_urls=archivos_urls,
+                autor=current_user
+            )
+
+            db.session.add(nueva_noticia)
+            db.session.commit()
+
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({
+                    'success': True,
+                    'redirect': url_for('ver_noticia', noticia_id=nueva_noticia.id)
+                })
+
+            flash('Noticia creada exitosamente', 'success')
+            return redirect(url_for('ver_noticia', noticia_id=nueva_noticia.id))
+
+        except Exception as e:
+            db.session.rollback()
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': False, 'message': str(e)}), 500
+            
+            flash(f'Error al crear la noticia: {str(e)}', 'error')
+            return redirect(url_for('crear_noticia'))
+
     return render_template('crear_noticia.html')
 
 @app.route('/registro', methods=['GET', 'POST'])
