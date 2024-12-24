@@ -1,6 +1,6 @@
 from app import db
 from flask import flash, url_for, redirect
-from datetime import datetime
+from datetime import datetime, timezone
 from flask_login import UserMixin, LoginManager, current_user
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -42,7 +42,7 @@ class Usuario(UserMixin, db.Model):
     nombre = db.Column(db.String(100))
     apellido = db.Column(db.String(100))
     rol = db.Column(db.String(20), nullable=False, default='editor')
-    fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
+    fecha_creacion = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     
     # Relación con noticias
     noticias = db.relationship('Noticia', backref='autor', lazy=True)
