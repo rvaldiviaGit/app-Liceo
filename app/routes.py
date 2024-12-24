@@ -22,6 +22,8 @@ from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 import os
 
+#este comentario es solo para que pueda actualizar el local
+
 # Configuración para subida de archivos
 ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 ALLOWED_FILE_EXTENSIONS = {'pdf', 'doc', 'docx', 'xls', 'xlsx'}
